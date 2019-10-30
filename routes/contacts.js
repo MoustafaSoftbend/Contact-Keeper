@@ -24,7 +24,10 @@ router.get('/', auth, async (req, res) =>{
 router.post('/',[auth, [
     check('name', 'Name is required')
         .not().
-        isEmpty()
+        isEmpty(),
+        check('type', 'Type must be personal or professional').isIn([
+            'personal',
+            'professional'])
 ]], 
 async (req, res) =>{
     const errors = validationResult(req);
@@ -44,6 +47,8 @@ async (req, res) =>{
         });
 
         const contact = await newContact.save();
+
+        res.json(contact);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
